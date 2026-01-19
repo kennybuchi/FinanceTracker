@@ -1,0 +1,4 @@
+# Database files - do not commit
+*.db
+*.db-wal
+*.db-shm
