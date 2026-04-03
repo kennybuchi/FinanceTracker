@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { budgetApi } from '../services/api';
+import { getLocalDate } from '../utils/date';
 
 const DEFAULT_CATEGORIES = [
   'Food & Groceries',
@@ -12,9 +13,11 @@ const DEFAULT_CATEGORIES = [
   'Other'
 ];
 
-function Budget() {
-  const [month, setMonth] = useState(new Date().getMonth() + 1);
-  const [year, setYear] = useState(new Date().getFullYear());
+function Budget({ user }) {
+  const today = getLocalDate(user?.timezone);
+  const [todayYear, todayMonth] = today.split('-').map(Number);
+  const [month, setMonth] = useState(todayMonth);
+  const [year, setYear] = useState(todayYear);
   const [totalBudget, setTotalBudget] = useState('');
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);

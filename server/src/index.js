@@ -7,7 +7,7 @@ const budgetRoutes = require('./routes/budget');
 const expenseRoutes = require('./routes/expenses');
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 8080;
 
 // Middleware
 app.use(cors());
@@ -23,12 +23,21 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Finance Tracker API is running' });
 });
 
+// Serve static files from client build
+const clientPath = path.resolve(__dirname, '../../client/dist');
+app.use(express.static(clientPath));
+
+// Fallback to index.html for SPA routing
+app.get('*', (req, res) => {
+  res.sendFile(path.join(clientPath, 'index.html'));
+});
+
 // Initialize database and start server
 async function start() {
   await db.initialize();
   
-  app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server running on http://0.0.0.0:${PORT}`);
   });
 }
 

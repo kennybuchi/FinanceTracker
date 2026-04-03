@@ -55,9 +55,22 @@ async function initialize() {
       username TEXT UNIQUE NOT NULL,
       email TEXT UNIQUE NOT NULL,
       password TEXT NOT NULL,
+      failed_login_attempts INTEGER DEFAULT 0,
+      locked_until DATETIME DEFAULT NULL,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
   `);
+
+  // Add lockout columns to existing databases
+  try {
+    db.run('ALTER TABLE users ADD COLUMN failed_login_attempts INTEGER DEFAULT 0');
+  } catch (_) { /* column already exists */ }
+  try {
+    db.run('ALTER TABLE users ADD COLUMN locked_until DATETIME DEFAULT NULL');
+  } catch (_) { /* column already exists */ }
+  try {
+    db.run("ALTER TABLE users ADD COLUMN timezone TEXT DEFAULT 'America/Los_Angeles'");
+  } catch (_) { /* column already exists */ }
 
   // Create budget_plans table (monthly budgets)
   db.run(`

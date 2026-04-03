@@ -1,11 +1,16 @@
 import { useState, useEffect } from 'react';
 import { expenseApi, budgetApi } from '../services/api';
+import { getLocalDate, formatDate } from '../utils/date';
 
-function Expenses() {
+function Expenses({ user }) {
+  const tz = user?.timezone;
+  const today = getLocalDate(tz);
+  const [todayYear, todayMonth] = today.split('-').map(Number);
+
   const [expenses, setExpenses] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [month, setMonth] = useState(new Date().getMonth() + 1);
-  const [year, setYear] = useState(new Date().getFullYear());
+  const [month, setMonth] = useState(todayMonth);
+  const [year, setYear] = useState(todayYear);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState({ type: '', text: '' });
   
@@ -14,7 +19,7 @@ function Expenses() {
     name: '',
     category: '',
     amount: '',
-    date: new Date().toISOString().split('T')[0]
+    date: getLocalDate(tz)
   });
   const [editingId, setEditingId] = useState(null);
   const [submitting, setSubmitting] = useState(false);
@@ -85,7 +90,7 @@ function Expenses() {
         name: '',
         category: '',
         amount: '',
-        date: new Date().toISOString().split('T')[0]
+        date: getLocalDate(tz)
       });
       setEditingId(null);
       loadData();
@@ -124,7 +129,7 @@ function Expenses() {
       name: '',
       category: '',
       amount: '',
-      date: new Date().toISOString().split('T')[0]
+      date: getLocalDate(tz)
     });
     setEditingId(null);
   };
@@ -263,7 +268,7 @@ function Expenses() {
             <tbody>
               {expenses.map((expense) => (
                 <tr key={expense.id}>
-                  <td>{new Date(expense.date).toLocaleDateString()}</td>
+                  <td>{formatDate(expense.date, tz)}</td>
                   <td>{expense.name}</td>
                   <td>{expense.category}</td>
                   <td>{formatCurrency(expense.amount)}</td>

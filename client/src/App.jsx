@@ -5,6 +5,7 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Budget from './pages/Budget';
 import Expenses from './pages/Expenses';
+import AccountSettings from './pages/AccountSettings';
 import Navbar from './components/Navbar';
 
 function App() {
@@ -24,6 +25,12 @@ function App() {
     localStorage.setItem('token', token);
     localStorage.setItem('user', JSON.stringify(userData));
     setUser(userData);
+  };
+
+  const handleUserUpdate = (updatedUser) => {
+    const merged = { ...user, ...updatedUser };
+    localStorage.setItem('user', JSON.stringify(merged));
+    setUser(merged);
   };
 
   const handleLogout = () => {
@@ -51,15 +58,19 @@ function App() {
           />
           <Route 
             path="/" 
-            element={user ? <Dashboard /> : <Navigate to="/login" />} 
+            element={user ? <Dashboard user={user} /> : <Navigate to="/login" />} 
           />
           <Route 
             path="/budget" 
-            element={user ? <Budget /> : <Navigate to="/login" />} 
+            element={user ? <Budget user={user} /> : <Navigate to="/login" />} 
           />
           <Route 
             path="/expenses" 
-            element={user ? <Expenses /> : <Navigate to="/login" />} 
+            element={user ? <Expenses user={user} /> : <Navigate to="/login" />} 
+          />
+          <Route 
+            path="/settings" 
+            element={user ? <AccountSettings user={user} onUserUpdate={handleUserUpdate} onLogout={handleLogout} /> : <Navigate to="/login" />} 
           />
         </Routes>
       </div>

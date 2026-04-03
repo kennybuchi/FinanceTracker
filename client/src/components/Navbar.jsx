@@ -1,17 +1,38 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 
 function Navbar({ user, onLogout }) {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const location = useLocation();
+
+  // Close menu on route change
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [location]);
+
   return (
     <header className="navbar">
-      <Link to="/" style={{ textDecoration: 'none' }}>
-        <h1>💰 Finance Tracker</h1>
-      </Link>
-      <nav>
+      <div className="navbar-top">
+        <Link to="/" style={{ textDecoration: 'none' }}>
+          <h1>💰 Finance Tracker</h1>
+        </Link>
+        <button
+          className="hamburger"
+          onClick={() => setMenuOpen(prev => !prev)}
+          aria-label="Toggle menu"
+        >
+          <span className={`hamburger-line ${menuOpen ? 'open' : ''}`} />
+          <span className={`hamburger-line ${menuOpen ? 'open' : ''}`} />
+          <span className={`hamburger-line ${menuOpen ? 'open' : ''}`} />
+        </button>
+      </div>
+      <nav className={menuOpen ? 'nav-open' : ''}>
         <Link to="/">Dashboard</Link>
         <Link to="/budget">Budget</Link>
         <Link to="/expenses">Expenses</Link>
-        <span className="user-info">Welcome, {user.username}</span>
-        <button onClick={onLogout}>Logout</button>
+        <Link to="/settings">Settings</Link>
+        <span className="nav-user">Logged in as {user.username}</span>
+        <button className="logout-btn" onClick={onLogout}>Logout</button>
       </nav>
     </header>
   );

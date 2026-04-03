@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Pie } from 'react-chartjs-2';
 import { budgetApi, expenseApi } from '../services/api';
+import { getLocalDate, formatDate } from '../utils/date';
 
 // Register Chart.js components
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -21,16 +22,18 @@ const CHART_COLORS = [
   '#ff9a9e'
 ];
 
-function Dashboard() {
+function Dashboard({ user }) {
   const [budget, setBudget] = useState(null);
   const [categories, setCategories] = useState([]);
   const [expenseSummary, setExpenseSummary] = useState({ byCategory: [], totalSpent: 0 });
   const [recentExpenses, setRecentExpenses] = useState([]);
   const [loading, setLoading] = useState(true);
   
-  const currentDate = new Date();
-  const [month, setMonth] = useState(currentDate.getMonth() + 1);
-  const [year, setYear] = useState(currentDate.getFullYear());
+  const tz = user?.timezone;
+  const today = getLocalDate(tz);
+  const [todayYear, todayMonth] = today.split('-').map(Number);
+  const [month, setMonth] = useState(todayMonth);
+  const [year, setYear] = useState(todayYear);
   const [viewMode, setViewMode] = useState('month'); // 'month' or 'last12'
 
   useEffect(() => {
@@ -336,7 +339,7 @@ function Dashboard() {
                     <div>
                       <span className="category-name">{expense.name}</span>
                       <div style={{ fontSize: '0.75rem', color: '#888' }}>
-                        {expense.category} • {new Date(expense.date).toLocaleDateString()}
+                        {expense.category} • {formatDate(expense.date, tz)}
                       </div>
                     </div>
                     <span className="category-amount">{formatCurrency(expense.amount)}</span>

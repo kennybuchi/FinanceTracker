@@ -104,10 +104,15 @@ router.get('/summary/last12months', (req, res) => {
     const userId = req.user.id;
     const db = getDb();
 
-    // Calculate date 12 months ago
-    const today = new Date();
-    const twelveMonthsAgo = new Date(today.getFullYear(), today.getMonth() - 11, 1);
-    const startDate = twelveMonthsAgo.toISOString().split('T')[0];
+    // Calculate date 12 months ago using user's timezone
+    const userRow = getOne(db, 'SELECT timezone FROM users WHERE id = ?', [userId]);
+    const tz = userRow?.timezone || 'America/Los_Angeles';
+    const todayStr = new Intl.DateTimeFormat('en-CA', { timeZone: tz }).format(new Date());
+    const [yr, mo] = todayStr.split('-').map(Number);
+    let startMonth = mo - 11;
+    let startYear = yr;
+    if (startMonth <= 0) { startMonth += 12; startYear -= 1; }
+    const startDate = `${startYear}-${String(startMonth).padStart(2, '0')}-01`;
 
     const summary = getAll(db, `
       SELECT category, SUM(amount) as total

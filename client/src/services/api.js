@@ -30,6 +30,59 @@ export const authApi = {
     const data = await response.json();
     if (!response.ok) throw new Error(data.error);
     return data;
+  },
+
+  async getProfile() {
+    const response = await fetch(`${API_BASE}/auth/profile`, {
+      headers: getAuthHeaders()
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error);
+    return data;
+  },
+
+  async updateUsername(newUsername) {
+    const response = await fetch(`${API_BASE}/auth/update-username`, {
+      method: 'PUT',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ newUsername })
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error);
+    return data;
+  },
+
+  async updateEmail(newEmail) {
+    const response = await fetch(`${API_BASE}/auth/update-email`, {
+      method: 'PUT',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ newEmail })
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error);
+    return data;
+  },
+
+  async updateTimezone(timezone) {
+    const response = await fetch(`${API_BASE}/auth/update-timezone`, {
+      method: 'PUT',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ timezone })
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error);
+    return data;
+  },
+
+  async updatePassword(currentPassword, newPassword, confirmPassword) {
+    const response = await fetch(`${API_BASE}/auth/update-password`, {
+      method: 'PUT',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ currentPassword, newPassword, confirmPassword })
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error);
+    return data;
   }
 };
 
